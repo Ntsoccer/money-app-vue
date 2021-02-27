@@ -1,23 +1,30 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
+import firebase from '../firebase'
 
 Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
-    users: [],
+    user: null,
   },
   getters: {
     users: state => state.users
   },
   mutations: {
     updateUsers(state, newUser) {
-      state.users.push(newUser)
+      state.user = newUser
     }
   },
   actions: {
-    updateUsers({ commit }, newUser) {
-      commit('updateUsers', newUser)
+    signUp(context, { email, password }) {
+      return firebase.auth().createUserWithEmailAndPassword(email, password)
+    },
+    login(context, { email, password }) {
+      return firebase.auth().signInWithEmailAndPassword(email, password)
+    },
+    signOut() {
+      return firebase.auth().signOut()
     }
   },
   modules: {

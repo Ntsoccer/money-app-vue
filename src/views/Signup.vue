@@ -10,15 +10,13 @@
     <label for="password">パスワード</label>
     <input type="password" id="password" v-model="password">
     <br>
-    <button @click="signup">新規登録</button>
+    <button @click="signUp">新規登録</button>
     <br>
     <router-link to="/">ログインはこちら</router-link>
   </div>
 </template>
 
 <script>
-// import firebase from '../firebase'
-import firebase from 'firebase'
 
 export default {
   data() {
@@ -29,17 +27,20 @@ export default {
     }
   },
   methods: {
-    signup() {
-      firebase.auth().createUserWithEmailAndPassword(this.email, this.password)
-      .then((response) => {
-        response.user.updateProfile({
-          displayName: this.username
-          });
-          this.$router.push('/')
-      })
-      .catch(error => {
-        alert(error.message)
-      })
+    signUp() {
+     this.$store.dispatch('signUp', {
+       email: this.email,
+       password: this.password
+     })
+     .then(response => {
+       response.user.updateProfile({
+         displayName: this.username
+       })
+       this.$router.push('/')      
+     })
+     .catch(error => {
+       alert(error.message)
+     })
     },
   },
 }

@@ -3,7 +3,7 @@
     <div class="head">
       <p>{{ username }}さんようこそ！</p>
       <p>残高:</p>
-      <button @click="Signout">ログアウト</button>
+      <button @click="signOut">ログアウト</button>
     </div>
     <table>
       <thead>
@@ -41,7 +41,7 @@
 </template>
 
 <script>
-import firebase from 'firebase'
+import firebase from '../firebase'
 export default {
   data() {
     return {
@@ -51,10 +51,11 @@ export default {
     }
   },
   methods: {
-    Signout() {
-      firebase.auth().signOut().then(() => {
-        this.$router.push('/')
-      })
+    signOut() {
+     this.$store.dispatch('signOut')
+     .then(() => {
+       this.$router.push('/')
+     })
     }
   },
 }

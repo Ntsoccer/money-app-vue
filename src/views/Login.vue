@@ -15,8 +15,6 @@
 </template>
 
 <script>
-// import firebase from '../firebase'
-import firebase from 'firebase'
 
 export default {
   data() {
@@ -27,15 +25,18 @@ export default {
   },
   methods: {
     login(){
-      firebase.auth().signInWithEmailAndPassword(this.email, this.password)
+      this.$store.dispatch('login', {
+        email: this.email,
+        password: this.password
+      })
       .then(() => {
-        this.$router.push('/money')
+        this.emial = ''
+        this.password = ''
+        this.$router.push('money')
       })
-      .catch(e => {
-        alert(e.message)
+      .catch(error => {
+        alert(error.message)
       })
-      this.email = '';
-      this.password = '';
     }
   },
 }
