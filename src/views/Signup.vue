@@ -30,16 +30,8 @@ export default {
     signUp() {
      this.$store.dispatch('signUp', {
        email: this.email,
-       password: this.password
-     })
-     .then(response => {
-       response.user.updateProfile({
-         displayName: this.username
-       })
-       this.$router.push('/')      
-     })
-     .catch(error => {
-       alert(error.message)
+       password: this.password,
+       username: this.username
      })
     },
   },

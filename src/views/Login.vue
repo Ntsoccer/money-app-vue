@@ -29,14 +29,6 @@ export default {
         email: this.email,
         password: this.password
       })
-      .then(() => {
-        this.emial = ''
-        this.password = ''
-        this.$router.push('money')
-      })
-      .catch(error => {
-        alert(error.message)
-      })
     }
   },
 }

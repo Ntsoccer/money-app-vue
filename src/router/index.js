@@ -12,27 +12,11 @@ const routes = [
     path: '/',
     name: 'Login',
     component: Login,
-    beforeEnter(to, from, next) {
-      const currentUser = firebase.auth().currentUser
-      if (!currentUser) {
-        next()
-      } else {
-        next('/money')
-      }
-    }
   },
   {
     path: '/signup',
     name: 'Signup',
     component: Signup,
-    beforeEnter(to, from, next) {
-      const currentUser = firebase.auth().currentUser
-      if (!currentUser) {
-        next('/')
-      } else {
-        next('/')
-      }
-    }
   },
   {
     path: '/money',

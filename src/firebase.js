@@ -1,5 +1,8 @@
 import firebase from 'firebase/app';
 import "firebase/auth";
+import 'firebase/firestore';
+import 'firebase/database';
+
 
 const config = {
   apiKey: "AIzaSyDcHXnKBk0YMiPNMqxLapcqVQiOUbg77fQ",
@@ -12,6 +15,7 @@ const config = {
   databaseURL: "https://vue-money-d498c.firebaseio.com"
 }
 
-firebase.initializeApp(config)
+firebase.initializeApp(config);
+firebase.firestore();
 
 export default firebase;
