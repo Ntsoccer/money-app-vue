@@ -9,22 +9,25 @@ export default new Vuex.Store({
   state: {
     user: null,
     username: '',
-    money: ''
+    money: '',
+    usernames: []
   },
   getters: {
     users: state => state.users,
     money: state => state.money,
-    username: state => state.username
+    username: state => state.username,
+    usernames: state => state.usernames,
   },
   mutations: {
     updateUsers(state, newUser) {
       state.user = newUser
     },
-    setMoney(state, doc) {
-      doc.then(response => {
-        state.money = response.data().money
+    setUsername() {
+      firebase.firestore().collection('users').get().then((querySnapshot) => {
+        // querySnapshot.forEach((doc) => {
+        console.log(querySnapshot)
+        // })
       })
-      console.log(doc)
     }
   },
   actions: {
@@ -63,10 +66,20 @@ export default new Vuex.Store({
           router.push('/')
         })
     },
-    setMoney({ commit }, uid) {
+    setMoney({ state }, uid) {
       const doc = firebase.firestore().collection('users').doc(uid).get()
-      commit('setMoney', doc)
+      doc
+        .then(response => {
+          state.money = response.data().money
+        })
+        .catch(error => {
+          alert(error.message)
+        })
     },
+    // setUsername({ commit }, uid) {
+    //   const doc = firebase.firestore().collection('users').doc(uid).get()
+    //   commit('setUsername', doc)
+    // }
   },
   modules: {
   }

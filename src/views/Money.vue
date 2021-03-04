@@ -14,8 +14,8 @@
         </tr>
       </thead>
       <tbody>
-        <tr>
-          <td></td>
+        <tr v-for="user in getUsers" :key="user">
+          <td>{{ user }}</td>
           <td>
             <button @click="isShow = !isShow">walletを見る</button>        
           </td>
@@ -48,6 +48,7 @@ export default {
       username: firebase.auth().currentUser.displayName,
       isShow: false,
       isDisplay: false,
+      usernames:[]
     }
   },
   methods: {
@@ -59,11 +60,17 @@ export default {
     getMoney() {
       return this.$store.getters.money
     },
+    getUsers() {
+      return this.$store.getters.users
+    }
   },
   created:function() {
       const user = firebase.auth().currentUser
       this.$store.dispatch('setMoney', user.uid)
-    }
+      this.$store.commit('setUsername')
+    },
+  mounted:function(){
+  }
 }
 </script>
 
