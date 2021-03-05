@@ -22,13 +22,12 @@ export default new Vuex.Store({
     updateUsers(state, newUser) {
       state.user = newUser
     },
-    setUsername() {
-      firebase.firestore().collection('users').get().then((querySnapshot) => {
-        // querySnapshot.forEach((doc) => {
-        console.log(querySnapshot)
-        // })
-      })
-    }
+    setMoney(state, newMoney) {
+      state.money = newMoney
+    },
+    setUsername(state, newUsername) {
+      state.usernames.push(newUsername)
+    },
   },
   actions: {
     signUp(context, { email, password, username }) {
@@ -66,20 +65,29 @@ export default new Vuex.Store({
           router.push('/')
         })
     },
-    setMoney({ state }, uid) {
+    setMoney({ commit }, uid) {
       const doc = firebase.firestore().collection('users').doc(uid).get()
       doc
         .then(response => {
-          state.money = response.data().money
+          const newMoney = response.data().money
+          commit('setMoney', newMoney)
         })
         .catch(error => {
           alert(error.message)
         })
     },
-    // setUsername({ commit }, uid) {
-    //   const doc = firebase.firestore().collection('users').doc(uid).get()
-    //   commit('setUsername', doc)
-    // }
+    setUsername({ commit }) {
+      firebase.firestore().collection('users').get()
+        .then((querySnapshot) => {
+          querySnapshot.forEach((doc) => {
+            const newUsername = doc.data().username
+            commit('setUsername', newUsername)
+          })
+        })
+        .catch(error => {
+          alert(error.message)
+        })
+    }
   },
   modules: {
   }

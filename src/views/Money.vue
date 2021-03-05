@@ -61,15 +61,15 @@ export default {
       return this.$store.getters.money
     },
     getUsers() {
-      return this.$store.getters.users
+      return this.$store.getters.usernames
     }
   },
-  created:function() {
+  created() {
       const user = firebase.auth().currentUser
       this.$store.dispatch('setMoney', user.uid)
-      this.$store.commit('setUsername')
+      this.$store.dispatch('setUsername')
     },
-  mounted:function(){
+  mounted() {
   }
 }
 </script>
