@@ -11,8 +11,6 @@ export default new Vuex.Store({
     username: '',
     money: '',
     usernames: [],
-    // uid: '',
-    specificUsername: ''
   },
   getters: {
     money: state => state.money,
@@ -20,7 +18,6 @@ export default new Vuex.Store({
     usernames: state => state.usernames,
     getMoney: state => state.money,
     uid: state => state.login_user ? state.login_user.uid : null,
-    specificUsername: state => state.specificUsername
   },
   mutations: {
     setLoginUser(state, user) {
@@ -38,13 +35,6 @@ export default new Vuex.Store({
     getMoney(state, sendedMoney) {
       state.money = state.money + sendedMoney
     },
-    specificUser(state, specificUsername) {
-      state.specificUsername = specificUsername
-    },
-    setUid(state, newUid) {
-      state.uid = newUid
-      console.log(state.uid)
-    }
   },
   actions: {
     setLoginUser({ commit }, user) {
@@ -115,27 +105,6 @@ export default new Vuex.Store({
     getMoney({ commit }, sendedMoney) {
       commit('getMoney', sendedMoney)
     },
-    specificUser({ commit }) {
-      firebase.firestore().collection('users').get()
-        .then(querySnapshot => {
-          querySnapshot.forEach(doc => {
-            console.log(doc.id)
-            //   firebase.firestore.collection('users').doc(doc.id).get()
-            //     .then(querySnapshot => {
-          })
-          // const data = doc.id;
-          // firebase.firestore().collection('users').doc(data).get().then(querySnapshot => {
-          //   console.log(querySnapshot)
-          //   const specificUsername = querySnapshot
-          //   commit('specificUser', specificUsername)
-          // })
-          commit('specificUser', querySnapshot)
-          // })
-        })
-    },
-    setUid({ commit }, newUid) {
-      commit('setUid', newUid)
-    }
   },
   modules: {
   }
