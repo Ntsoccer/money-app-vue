@@ -14,26 +14,28 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="user in getUsers" :key="user" @click="selectUsername(user)">
-          <td>{{ user }}</td>
+        <tr v-for="user in getUsers" :key="user" @click = "selectUsername(user)">
+          <template v-if = "username !== user">
+          <td>{{ user }}</td>    
           <td>
             <button @click="isShow = !isShow;">walletを見る</button>        
           </td>
           <td>
             <button @click="isDisplay = !isDisplay">送る</button>
           </td>
+          </template>
         </tr>
       </tbody>
     </table>
-    <div class="has-money" v-show="isShow">
+    <div class = "has-money" v-show = "isShow">
       <p>{{ usernames }}さんの残高</p>
       <p>{{ sendMoney }}</p>
       <button @click="isShow = !isShow">close</button>
     </div>
-    <div class="give-money" v-show="isDisplay">
+    <div class="give-money" v-show = "isDisplay">
       <p>あなたの残高:{{ sendMoney }}</p>
       <p>送る金額</p>
-      <input type="text" v-model="sendMoney">
+      <input type="text" v-model = "sendMoney">
       <br>
       <button @click="isDisplay = !isDisplay">送信</button>
     </div>
