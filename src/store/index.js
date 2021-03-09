@@ -11,13 +11,14 @@ export default new Vuex.Store({
     username: '',
     money: '',
     usernames: [],
+    getMoney: 1000
   },
   getters: {
     money: state => state.money,
     username: state => state.username,
     usernames: state => state.usernames,
-    getMoney: state => state.money,
     uid: state => state.login_user ? state.login_user.uid : null,
+    getMoney: state => state.getMoney
   },
   mutations: {
     setLoginUser(state, user) {
@@ -29,11 +30,11 @@ export default new Vuex.Store({
     setUsername(state, newUsername) {
       state.usernames.push(newUsername)
     },
-    updateMoney(state, sendMoney) {
-      state.money = state.money - sendMoney
+    updateMoney(state, sentMoney) {
+      state.money = state.money - sentMoney
     },
-    getMoney(state, sendedMoney) {
-      state.money = state.money + sendedMoney
+    getMoney(state, sentMoney) {
+      state.getMoney = state.getMoney + sentMoney
     },
   },
   actions: {
@@ -99,11 +100,15 @@ export default new Vuex.Store({
           alert(error.message)
         })
     },
-    updateMoney({ commit }, sendMoney) {
-      commit('updateMoney', sendMoney)
+    updateMoney({ commit, state }, { uid, sentMoney }) {
+      const doc2 = firebase.firestore().collection('users').doc(uid)
+      doc2.update({
+        money: state.money - sentMoney
+      })
+      commit('updateMoney', sentMoney)
     },
-    getMoney({ commit }, sendedMoney) {
-      commit('getMoney', sendedMoney)
+    getMoney({ commit }, sentMoney) {
+      commit('getMoney', sentMoney)
     },
   },
   modules: {

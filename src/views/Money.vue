@@ -2,7 +2,7 @@
   <div>
     <div class="head">
       <p>{{ username }}さんようこそ！</p>
-      <p>残高:{{ getMoney }}</p>
+      <p>残高:{{ money }}</p>
       <button @click="signOut">ログアウト</button>
     </div>
     <table>
@@ -21,7 +21,7 @@
             <button @click="isShow = !isShow;">walletを見る</button>        
           </td>
           <td>
-            <button @click="isDisplay = !isDisplay">送る</button>
+            <button @click="display()">送る</button>
           </td>
           </template>
         </tr>
@@ -29,15 +29,15 @@
     </table>
     <div class = "has-money" v-show = "isShow">
       <p>{{ usernames }}さんの残高</p>
-      <p>{{ sendMoney }}</p>
+      <p>{{ getMoney }}</p>
       <button @click="isShow = !isShow">close</button>
     </div>
     <div class="give-money" v-show = "isDisplay">
-      <p>あなたの残高:{{ sendMoney }}</p>
+      <p>あなたの残高:{{ money }}</p>
       <p>送る金額</p>
-      <input type="text" v-model = "sendMoney">
+      <input type="text" v-model="sentMoney">
       <br>
-      <button @click="isDisplay = !isDisplay">送信</button>
+      <button @click="display(); updateMoney();">送信</button>
     </div>
   </div>
 </template>
@@ -50,43 +50,38 @@ export default {
       username: firebase.auth().currentUser.displayName,
       isShow: false,
       isDisplay: false,
-      usernames: ''
+      usernames: '',
+      sentMoney: '',
     }
   },
   methods: {
     signOut() {
      this.$store.dispatch('signOut')
     },
-    specificUser() {
-      this.$store.dispatch('specificUser')
-    },
     setUid() {
       this.$store.commit('setUid')
     },
     selectUsername(user) {
-      return this.usernames=user
+      return this.usernames = user
+    },
+    updateMoney() {
+      const login_user= firebase.auth().currentUser
+      this.$store.dispatch('updateMoney', {uid:login_user.uid, sentMoney:this.sentMoney})
+      this.$store.dispatch('getMoney', Number(this.sentMoney))
+    },
+    display() {
+      this.isDisplay = !this.isDisplay
     }
   },
   computed: {
-    getMoney() {
+    money() {
       return this.$store.getters.money
     },
     getUsers() {
       return this.$store.getters.usernames
     },
-    sendMoney:{
-      get(){
-        return this.$store.getters.money
-      },
-      set(value){
-        this.$store.dispatch('updateMoney', value)
-      }
-    },
-    specificUsername() {
-      return this.$store.getters.specificUsername
-    },
-    getUid(){
-      return this.$store.getters.uid
+    getMoney() {
+      return this.$store.getters.getMoney
     }
   },
   created() {
@@ -95,7 +90,7 @@ export default {
       this.$store.dispatch('setUsername')
     },
   mounted() {
-  }
+  },
 }
 </script>
 
