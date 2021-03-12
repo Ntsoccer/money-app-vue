@@ -14,8 +14,8 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="user in getUsers" :key="user" @click = "selectUsername(user)">
-          <template v-if = "username !== user">
+        <tr v-for="(user,index) in getUsers" :key="user" @click="selectUsername(user); setIndex(index)">
+          <template>
           <td>{{ user }}</td>    
           <td>
             <button @click="isShow = !isShow;">walletを見る</button>        
@@ -29,7 +29,7 @@
     </table>
     <div class = "has-money" v-show = "isShow">
       <p>{{ usernames }}さんの残高</p>
-      <p>{{ getMoney }}</p>
+      <p>{{getMoney[index]}}</p>
       <button @click="isShow = !isShow">close</button>
     </div>
     <div class="give-money" v-show = "isDisplay">
@@ -50,27 +50,26 @@ export default {
       username: firebase.auth().currentUser.displayName,
       isShow: false,
       isDisplay: false,
-      usernames: '',
       sentMoney: '',
+      usernames: '',
+      index:''
     }
   },
   methods: {
     signOut() {
      this.$store.dispatch('signOut')
     },
-    setUid() {
-      this.$store.commit('setUid')
+    updateMoney() {
+      this.$store.dispatch('getMoney', {sentMoney: Number(this.sentMoney), index: this.index})
+    },
+    display() {
+      this.isDisplay = !this.isDisplay
     },
     selectUsername(user) {
       return this.usernames = user
     },
-    updateMoney() {
-      const login_user= firebase.auth().currentUser
-      this.$store.dispatch('updateMoney', {uid:login_user.uid, sentMoney:this.sentMoney})
-      this.$store.dispatch('getMoney', Number(this.sentMoney))
-    },
-    display() {
-      this.isDisplay = !this.isDisplay
+    setIndex(i){
+      return this.index = i
     }
   },
   computed: {
@@ -81,13 +80,15 @@ export default {
       return this.$store.getters.usernames
     },
     getMoney() {
-      return this.$store.getters.getMoney
+      return this.$store.getters.balanceMoney
     }
   },
   created() {
       const user = firebase.auth().currentUser
+      this.$store.dispatch('setUid', user.uid)
       this.$store.dispatch('setMoney', user.uid)
-      this.$store.dispatch('setUsername')
+      this.$store.dispatch('setUsername', user.uid)
+      this.$store.dispatch('setBalanceMoney', user.uid)
     },
   mounted() {
   },

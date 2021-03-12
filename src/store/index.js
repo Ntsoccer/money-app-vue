@@ -11,13 +11,16 @@ export default new Vuex.Store({
     username: '',
     money: '',
     usernames: [],
-    getMoney: 1000
+    balanceMoney: [],
+    uid: [],
+    getMoney: ''
   },
   getters: {
     money: state => state.money,
     username: state => state.username,
     usernames: state => state.usernames,
-    uid: state => state.login_user ? state.login_user.uid : null,
+    balanceMoney: state => state.balanceMoney,
+    uid: state => state.uid,
     getMoney: state => state.getMoney
   },
   mutations: {
@@ -33,9 +36,15 @@ export default new Vuex.Store({
     updateMoney(state, sentMoney) {
       state.money = state.money - sentMoney
     },
-    getMoney(state, sentMoney) {
-      state.getMoney = state.getMoney + sentMoney
+    getMoney(state, { sentMoney, index }) {
+      state.balanceMoney[index] = state.balanceMoney[index] + sentMoney
     },
+    setBalanceMoney(state, balance) {
+      state.balanceMoney.push(balance)
+    },
+    setUid(state, newUid) {
+      state.uid.push(newUid)
+    }
   },
   actions: {
     setLoginUser({ commit }, user) {
@@ -88,12 +97,36 @@ export default new Vuex.Store({
           alert(error.message)
         })
     },
-    setUsername({ commit }) {
-      firebase.firestore().collection('users').get()
+    setUid({ commit }, uid) {
+      firebase.firestore().collection('users').where('userId', '!=', uid).get()
+        .then(querySnapshot => {
+          querySnapshot.forEach(doc => {
+            const newUid = doc.data().userId
+            commit('setUid', newUid)
+          })
+        })
+        .catch(error => {
+          alert(error.message)
+        })
+    },
+    setUsername({ commit }, uid) {
+      firebase.firestore().collection('users').where('userId', '!=', uid).get()
         .then((querySnapshot) => {
           querySnapshot.forEach((doc) => {
             const newUsername = doc.data().username
             commit('setUsername', newUsername)
+          })
+        })
+        .catch(error => {
+          alert(error.message)
+        })
+    },
+    setBalanceMoney({ commit }, uid) {
+      firebase.firestore().collection('users').where('userId', '!=', uid).get()
+        .then(querySnapshot => {
+          querySnapshot.forEach(doc => {
+            const balance = doc.data().money
+            commit('setBalanceMoney', balance)
           })
         })
         .catch(error => {
@@ -107,8 +140,25 @@ export default new Vuex.Store({
       })
       commit('updateMoney', sentMoney)
     },
-    getMoney({ commit }, sentMoney) {
-      commit('getMoney', sentMoney)
+    getMoney({ state, commit }, { sentMoney, index }) {
+      //送金される側
+      const receiverId = state.uid[index]
+      const receiverDocRef = firebase.firestore().collection('users').doc(receiverId)
+      const getMoney = state.balanceMoney[index] + sentMoney
+      firebase.firestore().runTransaction(transaction => {
+        transaction.update(receiverDocRef, { money: getMoney })
+        commit('getMoney', { sentMoney, index })
+        return Promise.resolve('transaction complete');
+      })
+      //送金する側
+      const uid = firebase.auth().currentUser.uid
+      const sendedMoney = state.money - sentMoney
+      const senderDocRef = firebase.firestore().collection('users').doc(uid)
+      firebase.firestore().runTransaction(transaction => {
+        transaction.update(senderDocRef, { money: sendedMoney })
+        commit('updateMoney', sentMoney)
+        return Promise.resolve('transaction complete');
+      })
     },
   },
   modules: {
